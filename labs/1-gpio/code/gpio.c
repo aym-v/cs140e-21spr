@@ -28,7 +28,7 @@ void gpio_set_output(unsigned pin) {
     // implement this
     // use <gpio_fsel0>
 
-    unsigned input_bits = 0b001;
+    unsigned output_bits = 0b001;
 
     // 1. compute the right register number
     unsigned reg_n = pin / 10;
@@ -43,7 +43,7 @@ void gpio_set_output(unsigned pin) {
     unsigned target_addr = GPIO_BASE + reg_n * 4;
 
     // 5. get and update current value
-    unsigned current_bits = GET32(target_addr) | input_bits << offset;
+    unsigned current_bits = GET32(target_addr) | output_bits << offset;
 
     // 6. update 
     PUT32(target_addr, current_bits);
@@ -83,6 +83,26 @@ void gpio_write(unsigned pin, unsigned v) {
 // set <pin> to input.
 void gpio_set_input(unsigned pin) {
     // implement.
+
+    unsigned input_bits = 0b000;
+
+    // 1. compute the right register number
+    unsigned reg_n = pin / 10;
+
+    // 2. compute the local position
+    unsigned local_number = pin % 10;
+
+    // 3. compute the bit offset
+    unsigned offset = local_number * 3;
+
+    // 4. compute the target address
+    unsigned target_addr = GPIO_BASE + reg_n * 4;
+
+    // 5. get and update current value
+    unsigned current_bits = GET32(target_addr) & input_bits << offset;
+
+    // 6. update 
+    PUT32(target_addr, current_bits);
 }
 
 // return the value of <pin>
